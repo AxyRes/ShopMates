@@ -2,9 +2,8 @@ package com.dao;
 
 import java.util.List;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.model.User;
@@ -12,41 +11,35 @@ import com.model.User;
 @Repository
 public class UserDaoImpl implements UserDao {
 
-	@Autowired
-	private SessionFactory sessionFactory;
-	
+	private JdbcTemplate jdbcTemplate;
+
+	public UserDaoImpl(JdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
+	}
+
+	@Override
 	public List<User> getAllUsers() {
-		Session session = sessionFactory.openSession();
-		//List<Product> products = session.createQuery("from Product").list();
-	 List<User> users=	 session.createCriteria(User.class).list();
-	 System.out.println(users);
-		session.close();
+		String sql = "SELECT * FROM Accounts";
+		List<User> users = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(User.class));
 		return users;
 	}
 
+	@Override
 	public void deleteUser(String userId) {
-		Session session = sessionFactory.openSession();
-		User user = (User) session.get(User.class, userId);
-		session.saveOrUpdate(user);
-		session.flush();
-		session.close();// close the session
+		String sql = "DELETE FROM Accounts WHERE userId = ?";
+		jdbcTemplate.update(sql, userId);
 	}
 
+	@Override
 	public void addUser(User user) {
-		Session session = sessionFactory.openSession();
-		session.save(user);
-		session.close();
+		String sql = "INSERT INTO Accounts (userId, email, password, status) VALUES (?, ?, ?, ?)";
+		jdbcTemplate.update(sql, user.getUserId(), user.getEmailId(), user.getPassword(), user.isEnabled());
 	}
 
+	@Override
 	public User getUserById(String userId) {
-		// Reading the records from the table
-		Session session = sessionFactory.openSession();
-		// select * from Product where isbn=i
-		// if we call get method,Record doesnot exist it will return null
-		// if we call load, if the record doesnt exist it will throw exception
-		User user = (User) session.get(User.class, userId);
-		session.close();
+		String sql = "SELECT * FROM Accounts WHERE userId = ?";
+		User user = jdbcTemplate.queryForObject(sql, new Object[] { userId }, new BeanPropertyRowMapper<>(User.class));
 		return user;
 	}
-	
 }

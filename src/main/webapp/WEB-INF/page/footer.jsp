@@ -37,7 +37,7 @@
 				List</a> · <a href="<c:url value="/contactus"/>">Contact Us</a>
 		</p>
 
-		<p>Created by Mohammed Ismail.A ShopIeasy &copy; 2017</p>
+		<p>Created by AxyRes (Nhat Tien) ShopMates &copy; 2023</p>
 	</div>
 	</footer>
 </body>

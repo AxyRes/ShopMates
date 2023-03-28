@@ -17,7 +17,10 @@
 	    <property name="username" value="sa" />
 	    <property name="password" value="P@ssword123" />
 	</bean>
-
+	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+	    <constructor-arg ref="dataSource" />
+	</bean>
 
 	<!-- Spring - Security Purpose -->
 	<security:http auto-config="true" use-expressions="true">
